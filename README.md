@@ -65,11 +65,11 @@ db.push('key', { mzr2: 'value2' }) // [ { mzr: 'value' }, { mzr2: 'value2' } ]
 db.delByPriority('key', 1) // [ { mzr2: 'value2' } ]
 db.setByPriority('key', { newMZR2: 'This Edited!' }, 1) // [ { newMZR2: 'This Edited!' } ]
 
+db.type('key') // string
 db.has('key') // true
 db.delete('key') // true
 db.deleteAll() // true
 
-db.type('key') // string
 db.length // 20
 db.size // 11 Bytes
 db.version // 0.1.0
