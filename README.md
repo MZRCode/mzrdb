@@ -9,8 +9,8 @@
 </p>
 <p>
     <a href='https://www.npmjs.com/package/mzrdjs'><img src='https://img.shields.io/npm/l/mzrdjs.svg?style=for-the-badge' alt='License' /></a>
-    <a href='https://www.npmjs.com/package/mzrdjs'><img src='https://img.shields.io/npm/v/mzrdjs.svg?style=for-the-badge' alt='License' /></a>
     <a href='https://discord.gg/mzrdev' target='_blank'> <img alt='Discord' src='https://img.shields.io/badge/Support-Click%20here-7289d9?style=for-the-badge&logo=discord'> </a>
+    <a href='https://www.npmjs.com/package/mzrdjs'><img src='https://img.shields.io/npm/v/mzrdjs.svg?style=for-the-badge' alt='License' /></a>
 </p>
 </div>
 
