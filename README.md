@@ -1,16 +1,16 @@
 <div align='center'>
 <p>
-   <a href='https://nodei.co/npm/mzrdb/'><img src='https://nodei.co/npm/mzrdb.png?downloads=true&stars=true' alt='NPM info' /></a>
+   <a href='https://nodei.co/npm/mzrdb/'><img src='https://nodei.co/npm/mzrdjs.png?downloads=true&stars=true' alt='NPM info' /></a>
 </p>
 <p>
-    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/dt/mzrdb.svg?style=for-the-badge' alt='Download' /></a>
-    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/dm/mzrdb.svg?style=for-the-badge' alt='Download' /></a>
-    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/dw/mzrdb.svg?style=for-the-badge' alt='Download' /></a>
+    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/dt/mzrdjs.svg?style=for-the-badge' alt='Download' /></a>
+    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/dm/mzrdjs.svg?style=for-the-badge' alt='Download' /></a>
+    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/dw/mzrdjs.svg?style=for-the-badge' alt='Download' /></a>
 </p>
 <p>
-    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/l/mzrdb.svg?style=for-the-badge' alt='License' /></a>
+    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/l/mzrdjs.svg?style=for-the-badge' alt='License' /></a>
     <a href='https://discord.gg/ktVdQYrtXF' target='_blank'> <img alt='Discord' src='https://img.shields.io/badge/Support-Click%20here-7289d9?style=for-the-badge&logo=discord'> </a>
-    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/v/mzrdb.svg?style=for-the-badge' alt='License' /></a>
+    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/v/mzrdjs.svg?style=for-the-badge' alt='License' /></a>
 </p>
 <p>
     <a href="https://www.buymeacoffee.com/mzrdev" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" width="120px" height="30px" alt="Buy Me A Coffee"></a>
