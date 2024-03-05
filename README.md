@@ -90,7 +90,7 @@ db.length('object') // 1
 db.length() // 20 (Character count)
 
 db.size // 11 Bytes (Database size)
-db.version // 0.1.0
+db.version // 0.1.0 (Module version)
 ```
 
 ## Contact & Support
