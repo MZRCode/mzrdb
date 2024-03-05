@@ -19,7 +19,7 @@
 
 ## About
 - **Designed for Beginners:** The mzrdb module simplifies working with databases for new programmers. It provides an intuitive key-value interface, making data storage and retrieval a breeze.
-- **Built on Proven Technologies:** mzrdb leverages established database tools like Mongoose, JSON, YAML, and BSON. This ensures compatibility and a familiar experience for developers.
+- **Built on Proven Technologies:** mzrdb leverages established database tools like JSON, YAML, and BSON. This ensures compatibility and a familiar experience for developers.
 - **Future-Proof Flexibility:** The mzrdb module is designed with expandability in mind. Support for additional database types is planned for future releases, offering even greater flexibility.
 
 ## Features
