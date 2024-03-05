@@ -1,16 +1,16 @@
 <div align='center'>
 <p>
-   <a href='https://nodei.co/npm/mzrdjs/'><img src='https://nodei.co/npm/mzrdjs.png?downloads=true&stars=true' alt='NPM info' /></a>
+   <a href='https://nodei.co/npm/mzrdb/'><img src='https://nodei.co/npm/mzrdjs.png?downloads=true&stars=true' alt='NPM info' /></a>
 </p>
 <p>
-    <a href='https://www.npmjs.com/package/mzrdjs'><img src='https://img.shields.io/npm/dt/mzrdjs.svg?style=for-the-badge' alt='Download' /></a>
-    <a href='https://www.npmjs.com/package/mzrdjs'><img src='https://img.shields.io/npm/dm/mzrdjs.svg?style=for-the-badge' alt='Download' /></a>
-    <a href='https://www.npmjs.com/package/mzrdjs'><img src='https://img.shields.io/npm/dw/mzrdjs.svg?style=for-the-badge' alt='Download' /></a>
+    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/dt/mzrdjs.svg?style=for-the-badge' alt='Download' /></a>
+    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/dm/mzrdjs.svg?style=for-the-badge' alt='Download' /></a>
+    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/dw/mzrdjs.svg?style=for-the-badge' alt='Download' /></a>
 </p>
 <p>
-    <a href='https://www.npmjs.com/package/mzrdjs'><img src='https://img.shields.io/npm/l/mzrdjs.svg?style=for-the-badge' alt='License' /></a>
+    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/l/mzrdjs.svg?style=for-the-badge' alt='License' /></a>
     <a href='https://discord.gg/mzrdev' target='_blank'> <img alt='Discord' src='https://img.shields.io/badge/Support-Click%20here-7289d9?style=for-the-badge&logo=discord'> </a>
-    <a href='https://www.npmjs.com/package/mzrdjs'><img src='https://img.shields.io/npm/v/mzrdjs.svg?style=for-the-badge' alt='License' /></a>
+    <a href='https://www.npmjs.com/package/mzrdb'><img src='https://img.shields.io/npm/v/mzrdjs.svg?style=for-the-badge' alt='License' /></a>
 </p>
 </div>
 
@@ -48,33 +48,50 @@ db.move(quickdb);
 ```js
 const db = require('mzrdb')
 
-db.set('key.mzr', 'value') // key:{mzr: "value"}
-db.set('key', 'value') // "key": "value"
+db.set('key.mzr', 'value') // key: { mzr: "value" }
+db.set('key', 'value') // key: "value"
 
 db.get('key') // "value"
 db.fetch('key') // "value"
+
 db.all() // { key: "value" }
 db.getAll() // { key: "value" }
 db.fetchAll() // { key: "value" }
 
-db.push('key', 'value') // key: ['value']
-db.push('key', 'mzr') // key: ['value', 'mzr']
-db.unpush('key', 'value') // ['mzr']
+db.all('object') // [[ "key", [ "value" ]] ]
+db.all('keys') // [ "key" ]
+db.all('values') // [ [ "value" ] ]
 
-db.push('key', { mzr: 'value' }) // [ { mzr: 'value' } ]
-db.push('key', { mzr2: 'value2' }) // [ { mzr: 'value' }, { mzr2: 'value2' } ]
-db.delByPriority('key', 1) // [ { mzr2: 'value2' } ]
-db.setByPriority('key', { newMZR2: 'This Edited!' }, 1) // [ { newMZR2: 'This Edited!' } ]
+db.push('key', 'value') // key: ["value"]
+db.push('key', 'mzr') // key: ["value", "mzr"]
+db.unpush('key', 'value') // ["mzr"]
+
+db.push('key', { mzr: 'value' }) // [{ mzr: "value" }]
+db.push('key', { mzr2: 'value2' }) // [{ mzr: "value" }, { mzr2: "value2" } ]
+
+db.delByPriority('key', 1) // [ { mzr2: "value2" } ]
+db.setByPriority('key', { new2: 'This Edited!' }, 1) // [ { new2: "This Edited!" } ]
 
 db.type('key') // string
 db.has('key') // true
-db.delete('key') // true
-db.deleteAll() // true
 
-db.length // 20
-db.size // 11 Bytes
+db.delete('key') // true
+db.deleteAll() // true (Cleans database)
+db.clear() // true (Cleans database)
+
+db.backup('fileName') // true (Backups database)
+db.destroy() // true (Deletes database file)
+
+db.startsWith('ke') // [ { key: "key", data: "value" } ]
+db.includes('e') // [ { key: "key", data: "value" } ]
+db.endsWith('ey') // [ { key: "key", data: "value" } ]
+
+db.length('object') // 1 
+db.length() // 20 (Character count)
+
+db.size // 11 Bytes (Database size)
 db.version // 0.1.0
 ```
 
 ## Contact & Support
-[![Discord Server](https://api.weblutions.com/discord/invite/mzrdev/)](https://discord.gg/mzrdev)
+[![Discord Server](https://api.weblutions.com/discord/invite/mzrdev)](https://discord.gg/mzrdev)
