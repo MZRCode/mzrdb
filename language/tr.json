@@ -1,0 +1,8 @@
+{
+    "errors": {
+        "blankName": "[mzrdb] Verinin adını gir. Sorun mu yaşıyorsun? Discord'uma gel ve istediğin her şeyi sor. https://discord.gg/ktVdQYrtXF",
+        "blankData": "[mzrdb] Ayarlanacak veriyi gir. Sorun mu yaşıyorsun? Discord'uma gel ve istediğin her şeyi sor. https://discord.gg/ktVdQYrtXF",
+        "blankNumber": "[mzrdb] Bir sayı gir. Sorun mu yaşıyorsun? Discord'uma gel ve istediğin her şeyi sor. https://discord.gg/ktVdQYrtXF",
+        "oldVersion": "[mzrdb] Görüşüne göre mzrdb'nin eski bir sürümünü kullanıyorsun. Modülü güncellemek için 'npm i mzrdb@latest' kodunu kullan. Discorduma katıl: https://discord.gg/ktVdQYrtXF"
+    }
+}

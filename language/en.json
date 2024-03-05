@@ -1,0 +1,8 @@
+{
+    "errors": {
+        "blankName": "[mzrdb] Please give me a database name. Are you having errors? Join my Discord server and ask anything. https://discord.gg/ktVdQYrtXF",
+        "blankData": "[mzrdb] Please give me a data. Are you having errors? Join my Discord server and ask anything. https://discord.gg/ktVdQYrtXF",
+        "blankNumber": "[mzrdb] Please give me a number. Are you having errors? Join my Discord server and ask anything. https://discord.gg/ktVdQYrtXF",
+        "oldVersion": "[mzrdb] It seems like you are using an outdated version of mzrdb. Use 'npm i mzrdb@latest' to update module. Join my Discord server: https://discord.gg/ktVdQYrtXF"
+    }
+}
