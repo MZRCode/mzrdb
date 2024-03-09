@@ -18,10 +18,11 @@
 </div>
 
 ## Update
-- MongoDB support has been added.
+- loadBackup function added!
+- **MongoDB support has been added.**
 - TypeScript definitions of all functions have been changed!
 - Added examples and explanations to all functions
-- loadBackup function added!
+[!ScreenShots](https://cdn.discordapp.com/attachments/1141839057933049958/1216027995911884830/image.png?ex=65fee552&is=65ec7052&hm=ebd1c25b7adc3fb0bd4e4090f30b271d00b0756a3b6f59dc2a5bf72bbee617eb&)
 
 ## About
 - **Designed for Beginners:** The mzrdb module simplifies working with databases for new programmers. It provides an intuitive key-value interface, making data storage and retrieval a breeze.
