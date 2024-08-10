@@ -18,11 +18,9 @@
 </div>
 
 ## Update
-- loadBackup function added!
-- **MongoDB support has been added.**
-- TypeScript definitions of all functions have been changed!
-- Added examples and explanations to all functions
-![ExampleSS](https://cdn.discordapp.com/attachments/1141839057933049958/1216027995911884830/image.png?ex=65fee552&is=65ec7052&hm=ebd1c25b7adc3fb0bd4e4090f30b271d00b0756a3b6f59dc2a5bf72bbee617eb&)
+- Fixed issues with Mongodb!
+- setSeperator function added!
+- moveToMongo function fixed!
 
 ## About
 - **Designed for Beginners:** The mzrdb module simplifies working with databases for new programmers. It provides an intuitive key-value interface, making data storage and retrieval a breeze.
@@ -51,15 +49,16 @@
 const db = require('mzrdb');
 const quickdb = require('quick.db');
 
-db.move(quickdb);
+await db.move(quickdb);
 ```
 
 ## Moving Data From mzrdb to MongoDB
 ```js
-db.setAdapter('mongodb', { url: 'yourMongoURL' });
+const db = require('mzrdb');
 const jsondb = require('../yourFile.json');
+db.setAdapter('mongodb', { url: 'yourMongoURL' });
 
-db.moveToMongo(jsondb);
+await db.moveToMongo(jsondb);
 ```
 
 ## All Mongo Adapter Methods
@@ -68,9 +67,10 @@ const db = require('mzrdb')
 
 db.setLanguage('en') // en
 db.setCheckUpdates(true) // true
-db.setAdapter('jsondb') // true
+db.setAdapter('mongodb', { url: 'yourMongoURL', schema: 'mzrdb' }) // true
 db.setFolder('mzrdb') // true
 db.setFile('mzrdb') // true
+db.setSeperator('-') // true
 
 await db.set('key.mzr', 'value') // key: { mzr: "value" }
 await db.set('key', 'value') // key: "value"
@@ -140,6 +140,7 @@ db.setCheckUpdates(true) // true
 db.setAdapter('jsondb') // true
 db.setFolder('mzrdb') // true
 db.setFile('mzrdb') // true
+db.setSeperator('-') // true
 
 db.set('key.mzr', 'value') // key: { mzr: "value" }
 db.set('key', 'value') // key: "value"
