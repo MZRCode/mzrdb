@@ -6,9 +6,10 @@
     "url": "https://github.com/mzrcode/mzrdb/issues"
   },
   "deprecated": false,
-  "description": "Easy to use database module supporting Json, Yaml and Bson types",
+  "description": "User-friendly database module supporting JSON, MongoDB, YAML, and BSON formats for seamless data management.",
   "homepage": "https://github.com/mzrcode/mzrdb#readme",
   "keywords": [
+    "db",
     "mzr",
     "mzrdb",
     "mzr-db",
@@ -22,8 +23,11 @@
     "localstorage",
     "local storage",
     "node-json-db",
-    "db",
-    "database"
+    "database",
+    "mongo",
+    "mongodb",
+    "mongoose",
+    "mongoose database"
   ],
   "license": "MIT",
   "main": "./file/index.js",
@@ -33,5 +37,5 @@
     "type": "git",
     "url": "git+https://github.com/mzrcode/mzrdb.git"
   },
-  "version": "1.0.0"
+  "version": "1.4.0"
 }

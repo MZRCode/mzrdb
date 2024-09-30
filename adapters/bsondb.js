@@ -8,6 +8,7 @@ class BsonDB {
         this.dbFolder = options['dbFolder'];
         this.noBlankData = options['noBlankData'] ? (typeof options['noBlankData'] === 'boolean' ? options['noBlankData'] : false) : false;
         this.readable = options['readable'] ? (typeof options['readable'] === 'boolean' ? true : false) : false;
+        this.seperator = options['seperator'];
 
         try {
             bson = require('bson');
@@ -32,31 +33,42 @@ class BsonDB {
     }
 
     set(key, data) {
-        functions.set(key, data, this.content);
+        functions.set(key, data, this.content, this.seperator);
         this.writeBSONFile();
 
         return this.get(key);
     }
 
     get(key) {
-        return functions.get(this.content, ...key.split('.'));
+        return functions.get(this.content, this.seperator, ...key.split(this.seperator));
     }
 
     fetch(key) {
-        return functions.get(this.content, ...key.split('.'));
+        return functions.get(this.content, this.seperator, ...key.split(this.seperator));
     }
 
     has(key) {
-        return functions.get(this.content, ...key.split('.')) ? true : false;
+        return functions.get(this.content, this.seperator, ...key.split(this.seperator)) ? true : false;
     }
 
     type(key) {
-        return functions.get(this.content, ...key.split('.')) ? typeof functions.get(this.content, ...key.split('.')) : null;
+        if (!key) throw new TypeError(this.message['errors']['blankName']);
+
+        try {
+            const value = functions.get(this.content, this.seperator, ...key.split(this.seperator));
+
+            if (value === null) return 'null';
+            else if (Array.isArray(value)) return 'array';
+
+            return value !== undefined ? typeof value : 'null';
+        } catch (err) {
+            return null;
+        }
     }
 
     delete(key) {
         if (!this.get(key)) return false;
-        functions.remove(this.content, key);
+        functions.remove(this.content, key, this.seperator);
         if (this.noBlankData === true) functions.removeEmptyData(this.content);
         this.writeBSONFile();
 
@@ -65,16 +77,7 @@ class BsonDB {
 
     del(key) {
         if (!this.get(key)) return false;
-        functions.remove(this.content, key);
-        if (this.noBlankData === true) functions.removeEmptyData(this.content);
-        this.writeBSONFile();
-
-        return true;
-    }
-
-    delete(key) {
-        if (!this.get(key)) return false;
-        functions.remove(this.content, key);
+        functions.remove(this.content, key, this.seperator);
         if (this.noBlankData === true) functions.removeEmptyData(this.content);
         this.writeBSONFile();
 
@@ -292,6 +295,100 @@ class BsonDB {
         });
 
         return true;
+    }
+
+    ping() {
+        functions.fetchFiles(this.dbFolder, this.dbName);
+
+        const getStart = Date.now();
+        this.get('mzrdb');
+        const readPing = Date.now() - getStart;
+
+        const setStart = Date.now();
+        this.set('mzrdb', 'mzrdb');
+        const writePing = Date.now() - setStart;
+
+        const average = (readPing + writePing) / 2;
+        this.delete('mzrdb');
+
+        return { read: `${readPing}ms`, write: `${writePing}ms`, average: `${average}ms` };
+    }
+
+    loadBackup(path) {
+        if (!path.includes('.bson')) throw new TypeError('File in the path you show is not a bson file.');
+        if (fs.existsSync(`${path}`) === false) throw new Error('Please enter a correct file path.');
+        functions.fetchFiles(this.dbFolder, this.dbName);
+
+        const filePath = fs.realpathSync(`${path}`);
+        const dbPath = fs.realpathSync(`./${this.dbFolder}/${this.dbName}.bson`);
+
+        fs.writeFile(dbPath, fs.readFileSync(filePath, 'utf8'), (err) => {
+            if (err) throw new Error(err);
+        });
+
+        return true;
+    }
+
+    async uptime() {
+        throw new Error('Uptime feature is not applicable for Bson database.');
+    }
+
+    async connecetion() {
+        throw new Error('Connecetion feature is not applicable for Bson database.');
+    }
+
+    async disconnect() {
+        throw new Error('Disconnect feature is not applicable for Bson database.');
+    }
+
+    async exports() {
+        throw new Error('Exports feature is not applicable for Bson database.');
+    }
+
+    async export() {
+        throw new Error('Export feature is not applicable for Bson database.');
+    }
+
+    moveToMongo() {
+        throw new Error('Move to Mongo feature is not applicable for Bson database.');
+    }
+
+    length(key = 'all') {
+        if (key === 'all') key = 'all';
+        else if (key.includes('word')) key = 'all';
+        else if (key.includes('char')) key = 'all';
+        else if (key.includes('object')) key = 'object';
+        else key = 'all';
+
+        try {
+            if (key === 'object') {
+                const allData = Object.entries(JSON.parse(fs.readFileSync(`./${this.dbFolder}/${this.dbName}.bson`, 'utf8')));
+
+                return allData.length;
+            } else {
+                const allData = fs.readFileSync(`./${this.dbFolder}/${this.dbName}.bson`, 'utf8');
+
+                return allData.length;
+            };
+        } catch {
+            if (error.errno == -4058) throw new Error("mzrdb module is not installed! You can type 'npm i mzrdb@latest' to install it.")
+            else throw new Error('An error occurred! Here is the error that occurred: ' + error.message);
+        };
+    }
+
+    find(key, query) {
+        if (typeof key !== 'string' || key.trim() === '') {
+            throw new TypeError('Key must be a non-empty string.');
+        };
+
+        if (typeof query !== 'object' || query === null) {
+            throw new TypeError('Query must be an object.');
+        };
+
+        const data = this.get(key) || [];
+        if (!Array.isArray(data)) throw new Error('Data must be an array.');
+
+        return data.filter(doc => Object.keys(query).every(queryKey => queryKey in doc && doc[queryKey] === query[queryKey])) || [];
     }
 }
 

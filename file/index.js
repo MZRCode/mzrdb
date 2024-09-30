@@ -5,17 +5,26 @@ module.exports = {
     var adapter = this.adapter || require('../adapters/jsondb');
     var adapterName = this.adapterName || 'json';
 
+    if (this.mongoOptions?.schema) this.isMongoSpecialSchema = true;
+    else this.isMongoSpecialSchema = false;
+
     this.options = {
       dbName: this.file || 'mzrdb',
       dbFolder: this.folder || 'mzrdb',
       noBlankData: this.noBlankData || false,
       readable: this.readable || false,
       language: this.lang ? this.lang : 'en',
-      checkUpdates: this.checkUpdates || true
+      checkUpdates: this.checkUpdates || true,
+      isMongo: this.mongo,
+      mongoOptions: this.mongoOptions || { seperator: this.seperator || '.' },
+      isMongoSpecialSchema: this.isMongoSpecialSchema,
+      seperator: this.seperator || '.'
     };
 
     this.message = this.lang ? require(`../language/${this.lang.toLowerCase()}.json`) : require(`../language/en.json`);
-    this.adapter = adapter.set ? adapter : new adapter(this.options);
+    this.options.mongoOptions.seperator = this.options.seperator;
+
+    this.adapter = adapter.set ? adapter : (this.mongo ? new adapter(this.options.mongoOptions) : new adapter(this.options));
     this.adapterName = adapterName ? adapterName : 'json';
 
     if (this.checkUpdates) {
@@ -43,6 +52,15 @@ module.exports = {
     };
   },
 
+  setSeperator(key) {
+    this.seperator = key;
+    this.options.seperator = key;
+    this.options.mongoOptions.seperator = key;
+    this.setOptions();
+
+    return true;
+  },
+
   setLanguage(lang) {
     this.lang = lang ? (langs.includes(lang.toLowerCase()) ? lang.toLowerCase() : 'en') : 'en';
     this.message = require(`../language/${this.lang.toLowerCase()}.json`);
@@ -51,21 +69,40 @@ module.exports = {
     return lang;
   },
 
-  setAdapter(adapter) {
+  setAdapter(adapter, options = { seperator: this.options?.seperator ?? '.' }) {
     if (adapter.length < 1) throw new TypeError(this.message['errors']['blankName']);
 
-    try {
-      var Adapter = require('../adapters/' + adapter) || require('../adapters/jsondb');
-    } catch {
-      throw new TypeError('Please write down one of the adapters we support. (jsondb / bsondb / yamldb)');
-    }
+    const adapters = ['mongodb', 'jsondb', 'bsondb', 'yamldb'];
+    if (!adapters.includes(adapter)) throw new TypeError('Please write down one of the adapters we support. (jsondb / mongodb / bsondb / yamldb)');
 
-    this.adapter = Adapter;
+    if (adapter !== 'mongodb') {
+      var adapterRequire = require('../adapters/' + adapter) || require('../adapters/jsondb');
 
-    this.adapterName = adapter.slice(0, -2);
-    this.setOptions();
+      this.adapter = adapterRequire;
+      this.mongo = false;
 
-    return true;
+      this.adapterName = adapter.slice(0, -2);
+      this.setOptions();
+
+      return true;
+    } else {
+      try {
+        require('mongoose');
+      } catch {
+        throw new Error("You must install 'mongoose' modules to use this adapter.");
+      }
+
+      this.adapterName = adapter.slice(0, -2);
+      var adapter = require('../adapters/mongodb/index');
+
+      this.adapter = adapter;
+      this.mongo = true;
+      this.mongoOptions = options;
+
+      this.setOptions();
+
+      return true;
+    };
   },
 
   setFolder(folder) {
@@ -99,7 +136,6 @@ module.exports = {
   set(key, data) {
     this.setOptions();
     if (!key) throw new TypeError(this.message['errors']['blankName']);
-
     if (!data) throw new TypeError(this.message['errors']['blankData']);
 
     return this.adapter.set(key, data);
@@ -138,6 +174,10 @@ module.exports = {
     }
   },
 
+  check(key) {
+    this.has(key);
+  },
+
   type(key) {
     this.setOptions();
     if (!key) throw new TypeError(this.message['errors']['blankName']);
@@ -161,14 +201,7 @@ module.exports = {
   },
 
   del(key) {
-    this.setOptions();
-    if (!key) throw new TypeError(this.message['errors']['blankName']);
-
-    try {
-      return this.adapter.del(key);
-    } catch (err) {
-      return false;
-    }
+    this.delete(key);
   },
 
   add(key, value) {
@@ -192,13 +225,7 @@ module.exports = {
   },
 
   sub(key, value) {
-    this.setOptions();
-
-    if (!key) throw new TypeError(this.message['errors']['blankName']);
-    if (!value) throw new TypeError(this.message['errors']['blankData']);
-    if (!value) throw new TypeError(this.message['errors']['blankNumber']);
-
-    return this.adapter.sub(key, value);
+    this.subtract(key, value);
   },
 
   push(key, data) {
@@ -278,10 +305,11 @@ module.exports = {
   },
 
   move(quickDB) {
-    console.log('QuickDB to mzrdb: Started copying database.')
+    console.log('QuickDB to mzrdb json: Started copying database.');
+
     quickDB.fetchAll().map((data) => {
       this.adapter.set(data.ID, data.data)
-      console.log(`QuickDB to mzrdb: Copied ${data.ID}`)
+      console.log(`QuickDB to mzrdb json: Copied ${data.ID}`)
     });
 
     return true;
@@ -293,6 +321,8 @@ module.exports = {
   },
 
   get size() {
+    this.setOptions();
+
     let dbName = null;
     let dbFolder = null;
     try {
@@ -323,29 +353,9 @@ module.exports = {
   },
 
   length(key = 'all') {
-    let dbName = null;
-    let dbFolder = null;
-    try {
-      dbName = this.options ? this.options['dbName'] : 'mzrdb';
-      dbFolder = this.options ? this.options['dbFolder'] : 'mzrdb';
-    } catch (error) {
-      throw new TypeError(this.message['errors']['blankName']);
-    }
+    this.setOptions();
 
-    if (key === 'all') key = 'all';
-    else if (key.includes('word')) key = 'all';
-    else if (key.includes('character')) key = 'all';
-    else if (key.includes('object')) key = 'object';
-    else key = 'all';
-
-    if (dbName && dbFolder) {
-      try {
-        return this.all(key).length || 0;
-      } catch {
-        if (error.errno == -4058) throw new Error("mzrdb module is not installed! You can type 'npm i mzrdb@latest' to install it.")
-        else throw new Error('An error occurred! Here is the error that occurred: ' + error.message);
-      }
-    };
+    return this.adapter.length(key);
   },
 
   startsWith(key) {
@@ -370,5 +380,72 @@ module.exports = {
     this.setOptions();
 
     return this.adapter.destroy();
+  },
+
+  get ping() {
+    this.setOptions();
+
+    return this.adapter.ping();
+  },
+
+  loadBackup(filePath) {
+    this.setOptions();
+
+    if (!filePath) throw new TypeError(this.message['errors']['blankData']);
+    if (typeof filePath !== 'string') throw new TypeError(this.message['errors']['blankType']);
+
+    return this.adapter.loadBackup(filePath);
+  },
+
+  deleteMongo() {
+    var adapter = require('../adapters/jsondb');
+
+    this.adapter = adapter;
+    this.mongo = false;
+    this.setOptions();
+
+    return true;
+  },
+
+  moveToMongo(jsondb) {
+    console.log('[MZRDB - JSON TO MONGO] Started copying database.');
+
+    Object.keys(jsondb).map(async (data) => {
+      await this.adapter.set(data, jsondb[data]);
+
+      console.log(`[MZRDB - JSON TO MONGO] Copied ${data}`);
+    });
+
+    return true;
+  },
+
+  uptime() {
+    this.setOptions();
+
+    return this.adapter.uptime();
+  },
+
+  connection() {
+    this.setOptions();
+
+    return this.adapter.connection();
+  },
+
+  disconnect() {
+    this.setOptions();
+
+    return this.adapter.disconnect();
+  },
+
+  exports(fileName) {
+    this.setOptions();
+
+    return this.adapter.export(fileName);
+  },
+
+  find(key, query) {
+    this.setOptions();
+
+    return this.adapter.find(key, query);
   }
 }

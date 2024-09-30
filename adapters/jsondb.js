@@ -9,6 +9,7 @@ class JsonDB {
     this.dbFolder = options['dbFolder'];
     this.noBlankData = options['noBlankData'] ? (typeof options['noBlankData'] === 'boolean' ? options['noBlankData'] : false) : false;
     this.readable = options['readable'] ? (typeof options['readable'] === 'boolean' ? true : false) : false;
+    this.seperator = options['seperator'];
 
     functions.fetchFiles(this.dbFolder, this.dbName);
   }
@@ -20,7 +21,7 @@ class JsonDB {
     if (!data) throw new TypeError(this.message['errors']['blankData']);
 
     var content = JSON.parse(fs.readFileSync(`./${this.dbFolder}/${this.dbName}.json`, 'utf8'));
-    functions.set(key, data, content);
+    functions.set(key, data, content, this.seperator);
 
     if (this.readable) fs.writeFileSync(`./${this.dbFolder}/${this.dbName}.json`, JSON.stringify(content, null, 2));
     else fs.writeFileSync(`./${this.dbFolder}/${this.dbName}.json`, JSON.stringify(content));
@@ -34,22 +35,14 @@ class JsonDB {
     var content = JSON.parse(fs.readFileSync(`./${this.dbFolder}/${this.dbName}.json`, 'utf8'));
 
     try {
-      return functions.get(content, ...key.split('.'));
+      return functions.get(content, this.seperator, ...key.split(this.seperator));
     } catch (err) {
       return undefined;
     }
   }
 
   fetch(key) {
-    if (!key) throw new TypeError(this.message['errors']['blankName']);
-
-    var content = JSON.parse(fs.readFileSync(`./${this.dbFolder}/${this.dbName}.json`, 'utf8'));
-
-    try {
-      return functions.get(content, ...key.split('.'));
-    } catch (err) {
-      return undefined;
-    }
+    return this.get(key);
   }
 
   type(key) {
@@ -58,11 +51,17 @@ class JsonDB {
     var content = JSON.parse(fs.readFileSync(`./${this.dbFolder}/${this.dbName}.json`, 'utf8'));
 
     try {
-      return functions.get(content, ...key.split('.')) ? typeof functions.get(content, ...key.split('.')) : null;
+      const value = functions.get(content, this.seperator, ...key.split(this.seperator));
+
+      if (value === null) return 'null';
+      else if (Array.isArray(value)) return 'array';
+
+      return value !== undefined ? typeof value : 'null';
     } catch (err) {
       return null;
     }
   }
+
 
   has(key) {
     if (!key) throw new TypeError(this.message['errors']['blankName']);
@@ -70,7 +69,7 @@ class JsonDB {
     var content = JSON.parse(fs.readFileSync(`./${this.dbFolder}/${this.dbName}.json`, 'utf8'));
 
     try {
-      return functions.get(content, ...key.split('.')) ? true : false;
+      return functions.get(content, this.seperator, ...key.split(this.seperator)) ? true : false;
     } catch (err) {
       return false;
     }
@@ -84,7 +83,7 @@ class JsonDB {
     var content = JSON.parse(fs.readFileSync(`./${this.dbFolder}/${this.dbName}.json`, 'utf8'));
     if (!this.get(key)) return false;
 
-    functions.remove(content, key);
+    functions.remove(content, key, this.seperator);
 
     if (this.noBlankData === true) functions.removeEmptyData(content);
     if (this.readable) fs.writeFileSync(`./${this.dbFolder}/${this.dbName}.json`, JSON.stringify(content, null, 2));
@@ -94,20 +93,7 @@ class JsonDB {
   }
 
   del(key) {
-    functions.fetchFiles(this.dbFolder, this.dbName);
-
-    if (!key) throw new TypeError(this.message['errors']['blankName']);
-
-    var content = JSON.parse(fs.readFileSync(`./${this.dbFolder}/${this.dbName}.json`, 'utf8'));
-    if (!this.get(key)) return false;
-
-    functions.remove(content, key);
-
-    if (this.noBlankData === true) functions.removeEmptyData(content);
-    if (this.readable) fs.writeFileSync(`./${this.dbFolder}/${this.dbName}.json`, JSON.stringify(content, null, 2));
-    else fs.writeFileSync(`./${this.dbFolder}/${this.dbName}.json`, JSON.stringify(content));
-
-    return true;
+    return this.delete(key);
   }
 
   add(key, value) {
@@ -340,6 +326,96 @@ class JsonDB {
     });
 
     return true;
+  }
+
+  ping() {
+    functions.fetchFiles(this.dbFolder, this.dbName);
+
+    const getStart = Date.now();
+    this.get('mzrdb');
+    const readPing = Date.now() - getStart;
+
+    const setStart = Date.now();
+    this.set('mzrdb', 'mzrdb');
+    const writePing = Date.now() - setStart;
+
+    const average = (readPing + writePing) / 2;
+    this.delete('mzrdb');
+
+    return { read: `${readPing}ms`, write: `${writePing}ms`, average: `${average}ms` };
+  }
+
+  loadBackup(path) {
+    if (!path.includes('.json')) throw new TypeError('File in the path you show is not a json file.');
+    if (fs.existsSync(`${path}`) === false) throw new Error('Please enter a correct file path.');
+    functions.fetchFiles(this.dbFolder, this.dbName);
+
+    const filePath = fs.realpathSync(`${path}`);
+    const dbPath = fs.realpathSync(`./${this.dbFolder}/${this.dbName}.json`);
+
+    fs.writeFile(dbPath, fs.readFileSync(filePath, 'utf8'), (err) => {
+      if (err) throw new Error(err);
+    });
+
+    return true;
+  }
+
+  async uptime() {
+    throw new Error('Uptime feature is not applicable for Json database.');
+  }
+
+  async connecetion() {
+    throw new Error('Connecetion feature is not applicable for Json database.');
+  }
+
+  async disconnect() {
+    throw new Error('Disconnect feature is not applicable for Json database.');
+  }
+
+  async exports() {
+    throw new Error('Exports feature is not applicable for Json database.');
+  }
+
+  async export() {
+    throw new Error('Export feature is not applicable for Json database.');
+  }
+
+  length(key = 'all') {
+    if (key === 'all') key = 'all';
+    else if (key.includes('word')) key = 'all';
+    else if (key.includes('char')) key = 'all';
+    else if (key.includes('object')) key = 'object';
+    else key = 'all';
+
+    try {
+      if (key === 'object') {
+        const allData = Object.entries(JSON.parse(fs.readFileSync(`./${this.dbFolder}/${this.dbName}.json`, 'utf8')));
+
+        return allData.length;
+      } else {
+        const allData = fs.readFileSync(`./${this.dbFolder}/${this.dbName}.json`, 'utf8');
+
+        return allData.length;
+      };
+    } catch {
+      if (error.errno == -4058) throw new Error("mzrdb module is not installed! You can type 'npm i mzrdb@latest' to install it.")
+      else throw new Error('An error occurred! Here is the error that occurred: ' + error.message);
+    };
+  }
+
+  find(key, query) {
+    if (typeof key !== 'string' || key.trim() === '') {
+      throw new TypeError('Key must be a non-empty string.');
+    };
+
+    if (typeof query !== 'object' || query === null) {
+      throw new TypeError('Query must be an object.');
+    };
+
+    const data = this.get(key) || [];
+    if (!Array.isArray(data)) throw new Error('Data must be an array.');
+
+    return data.filter(doc => Object.keys(query).every(queryKey => queryKey in doc && doc[queryKey] === query[queryKey])) || [];
   }
 }
 

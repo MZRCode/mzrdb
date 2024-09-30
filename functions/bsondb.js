@@ -1,9 +1,9 @@
 const bson = require('bson');
 const fs = require('fs');
 
-module.exports.set = function (path, value, obj) {
+module.exports.set = function (path, value, obj, seperator) {
     var schema = obj;
-    var pList = path.split('.');
+    var pList = path.split(seperator);
     var len = pList.length;
 
     for (var i = 0; i < len - 1; i++) {
@@ -15,16 +15,16 @@ module.exports.set = function (path, value, obj) {
     schema[pList[len - 1]] = value;
 };
 
-module.exports.get = function (obj, ...data) {
+module.exports.get = function (obj, seperator, ...data) {
     return data.reduce(function (acc, key) {
         return acc[key];
     }, obj);
 };
 
-module.exports.remove = function (obj, path) {
+module.exports.remove = function (obj, path, seperator) {
     if (!obj || !path) return;
 
-    if (typeof path === 'string') path = path.split('.');
+    if (typeof path === 'string') path = path.split(seperator);
 
     for (var i = 0; i < path.length - 1; i++) {
         obj = obj[path[i]];
