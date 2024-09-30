@@ -18,9 +18,9 @@
 </div>
 
 ## New version 1.4.0!
-- setAdapter function fixed!
-- find function added!
-- type function updated!
+- **setAdapter** function fixed!
+- **find** function added!
+- **type** function updated!
 
 ## About
 - **Designed for Beginners:** The mzrdb module simplifies working with databases for new programmers. It provides an intuitive key-value interface, making data storage and retrieval a breeze.
