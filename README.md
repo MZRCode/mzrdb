@@ -17,10 +17,10 @@
 </p>
 </div>
 
-## Update
-- Fixed issues with Mongodb!
-- setSeperator function added!
-- moveToMongo function fixed!
+## New version 1.4.0!
+- setAdapter function fixed!
+- find function added!
+- type function updated!
 
 ## About
 - **Designed for Beginners:** The mzrdb module simplifies working with databases for new programmers. It provides an intuitive key-value interface, making data storage and retrieval a breeze.
@@ -67,7 +67,7 @@ const db = require('mzrdb')
 
 db.setLanguage('en') // en
 db.setCheckUpdates(true) // true
-db.setAdapter('mongodb', { url: 'yourMongoURL', schema: 'mzrdb' }) // true
+db.setAdapter('mongodb', { url: 'yourMongoURL', schema: 'mzrdb', seperator: '.' }) // true
 db.setFolder('mzrdb') // true
 db.setFile('mzrdb') // true
 db.setSeperator('-') // true
@@ -86,7 +86,7 @@ await db.all() // { key: "value" }
 await db.getAll() // { key: "value" }
 await db.fetchAll() // { key: "value" }
 
-await db.all('object') // [[ "key", [ "value" ]] ]
+await db.all('object') // [[ "key", [ "value" ] ]]
 await db.all('keys') // [ "key" ]
 await db.all('values') // [ [ "value" ] ]
 
@@ -94,8 +94,10 @@ await db.push('key', 'value') // key: ["value"]
 await db.push('key', 'mzr') // key: ["value", "mzr"]
 await db.unpush('key', 'value') // ["mzr"]
 
-await db.push('key', { mzr: 'value' }) // [{ mzr: "value" }]
-await db.push('key', { mzr2: 'value2' }) // [{ mzr: "value" }, { mzr2: "value2" } ]
+await db.push('key', { mzr: 'value' }) // [ { mzr: "value" }]
+await db.push('key', { mzr2: 'value2' }) // [ { mzr: "value" }, { mzr2: "value2" } ]
+
+await db.find('key', { mzr: 'value' }) // [ { mzr: "value" } ]
 
 await db.delByPriority('key', 1) // [ { mzr2: "value2" } ]
 await db.setByPriority('key', { new2: 'This Edited!' }, 1) // [ { new2: "This Edited!" } ]
@@ -126,7 +128,7 @@ await db.length() // 20 (Character count)
 
 db.ping // { read: '1ms', write: '3ms', average: '2ms' }
 db.size // 11 Bytes (Database size)
-db.version // 1.0.0 (Module version)
+db.version // 1.2.0 (Module version)
 ```
 
 ## All Local Adapter Methods
@@ -156,7 +158,7 @@ db.all() // { key: "value" }
 db.getAll() // { key: "value" }
 db.fetchAll() // { key: "value" }
 
-db.all('object') // [[ "key", [ "value" ]] ]
+db.all('object') // [[ "key", [ "value" ] ]]
 db.all('keys') // [ "key" ]
 db.all('values') // [ [ "value" ] ]
 
@@ -164,8 +166,10 @@ db.push('key', 'value') // key: ["value"]
 db.push('key', 'mzr') // key: ["value", "mzr"]
 db.unpush('key', 'value') // ["mzr"]
 
-db.push('key', { mzr: 'value' }) // [{ mzr: "value" }]
-db.push('key', { mzr2: 'value2' }) // [{ mzr: "value" }, { mzr2: "value2" } ]
+db.push('key', { mzr: 'value' }) // [ { mzr: "value" }]
+db.push('key', { mzr2: 'value2' }) // [ { mzr: "value" }, { mzr2: "value2" } ]
+
+db.find('key', { mzr: 'value' }) // [ { mzr: "value" } ]
 
 db.delByPriority('key', 1) // [ { mzr2: "value2" } ]
 db.setByPriority('key', { new2: 'This Edited!' }, 1) // [ { new2: "This Edited!" } ]
@@ -191,9 +195,9 @@ db.endsWith('ey') // [ { key: "key", data: "value" } ]
 db.length('object') // 1 
 db.length() // 20 (Character count)
 
-db.ping // { read: '1ms', write: '3ms', average: '2ms' }
+db.ping // { read: "1ms", write: "2ms", average: "1.5ms" }
 db.size // 11 Bytes (Database size)
-db.version // 1.0.0 (Module version)
+db.version // 1.2.0 (Module version)
 ```
 
 ## Contact & Support
