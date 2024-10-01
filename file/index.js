@@ -8,6 +8,8 @@ module.exports = {
     if (this.mongoOptions?.schema) this.isMongoSpecialSchema = true;
     else this.isMongoSpecialSchema = false;
 
+    this.message = this.lang ? require(`../language/${this.lang.toLowerCase()}.json`) : require(`../language/en.json`);
+
     this.options = {
       dbName: this.file || 'mzrdb',
       dbFolder: this.folder || 'mzrdb',
@@ -18,10 +20,10 @@ module.exports = {
       isMongo: this.mongo,
       mongoOptions: this.mongoOptions || { seperator: this.seperator || '.' },
       isMongoSpecialSchema: this.isMongoSpecialSchema,
-      seperator: this.seperator || '.'
+      seperator: this.seperator || '.',
+      message: this.message
     };
 
-    this.message = this.lang ? require(`../language/${this.lang.toLowerCase()}.json`) : require(`../language/en.json`);
     this.options.mongoOptions.seperator = this.options.seperator;
 
     this.adapter = adapter.set ? adapter : (this.mongo ? new adapter(this.options.mongoOptions) : new adapter(this.options));
@@ -447,5 +449,29 @@ module.exports = {
     this.setOptions();
 
     return this.adapter.find(key, query);
+  },
+
+  findAndUpdate(key, query, update) {
+    this.setOptions();
+
+    return this.adapter.findAndUpdate(key, query, update);
+  },
+
+  findAndDelete(key, query) {
+    this.setOptions();
+
+    return this.adapter.findAndDelete(key, query);
+  },
+
+  findOneAndUpdate(key, query, update) {
+    this.setOptions();
+
+    return this.adapter.findOneAndUpdate(key, query, update);
+  },
+
+  findOneAndDelete(key, query) {
+    this.setOptions();
+
+    return this.adapter.findOneAndDelete(key, query);
   }
 }

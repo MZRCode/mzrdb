@@ -4,6 +4,11 @@
         "blankData": "[mzrdb] Please give me a data. Are you having errors? Join my Discord server and ask anything. https://discord.gg/ktVdQYrtXF",
         "blankNumber": "[mzrdb] Please give me a number. Are you having errors? Join my Discord server and ask anything. https://discord.gg/ktVdQYrtXF",
         "oldVersion": "[mzrdb] It seems like you are using an outdated version of mzrdb. Use 'npm i mzrdb@latest' to update module. Join my Discord server: https://discord.gg/ktVdQYrtXF",
-        "blankType": "[mzrdb] Write data that is a String. Are you having errors? Join my Discord server and ask anything. https://discord.gg/ktVdQYrtXF"
+        "blankType": "[mzrdb] Write data that is a String. Are you having errors? Join my Discord server and ask anything. https://discord.gg/ktVdQYrtXF",
+        "nonEmptyString": "[mzrdb] Key must be a non-empty string. Are you having errors? Join my Discord server and ask anything. https://discord.gg/ktVdQYrtXF",
+        "queryMustObjects": "[mzrdb] Query must be an object. Are you having errors? Join my Discord server and ask anything. https://discord.gg/ktVdQYrtXF",
+        "updateMustObjects": "[mzrdb] Update must be an object. Are you having errors? Join my Discord server and ask anything. https://discord.gg/ktVdQYrtXF",
+        "dataMustArray": "[mzrdb] Data must be an array. Are you having errors? Join my Discord server and ask anything. https://discord.gg/ktVdQYrtXF",
+        "noDocMatchedQuery": "[mzrdb] No document matched the query. Are you having errors? Join my Discord server and ask anything. https://discord.gg/ktVdQYrtXF"
     }
 }

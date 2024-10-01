@@ -11,6 +11,7 @@ class MongoDB extends Base {
 
         this.schema = options.schema ? Schema(options.schema) : Schema('mzrdb');
         this.seperator = options['seperator'];
+        this.message = options['message'];
     }
 
     async set(key, data) {
@@ -365,17 +366,154 @@ class MongoDB extends Base {
 
     async find(key, query) {
         if (typeof key !== 'string' || key.trim() === '') {
-            throw new TypeError('Key must be a non-empty string.');
+            throw new TypeError(this.message['errors']['nonEmptyString']);
         };
 
         if (typeof query !== 'object' || query === null) {
-            throw new TypeError('Query must be an object.');
+            throw new TypeError(this.message['errors']['queryMustObjects']);
         };
 
         const data = await this.get(key) || [];
-        if (!Array.isArray(data)) throw new Error('Data must be an array.');
+        if (!Array.isArray(data)) throw new Error(this.message['errors']['dataMustArray']);
 
         return data.filter(doc => Object.keys(query).every(queryKey => queryKey in doc && doc[queryKey] === query[queryKey])) || [];
+    }
+
+    async findAndUpdate(key, query, update) {
+        if (typeof key !== 'string' || key.trim() === '') {
+            throw new TypeError(this.message['errors']['nonEmptyString']);
+        };
+
+        if (typeof query !== 'object' || query === null) {
+            throw new TypeError(this.message['errors']['queryMustObjects']);
+        };
+
+        if (typeof update !== 'object' || update === null) {
+            throw new TypeError(this.message['errors']['updateMustObjects']);
+        };
+
+        const data = await this.get(key) || [];
+        if (!Array.isArray(data)) throw new Error(this.message['errors']['dataMustArray']);
+
+        const updatedDocs = data.map(doc => {
+            const matches = Object.keys(query).every(queryKey => queryKey in doc && doc[queryKey] === query[queryKey]);
+            if (matches) {
+                const oldDoc = { ...doc };
+                const newDoc = { ...oldDoc, ...update };
+
+                return { old: oldDoc, new: newDoc };
+            };
+
+            return null;
+        }).filter(doc => doc !== null);
+
+        if (updatedDocs.length > 0) {
+            this.set(key, data.map(doc => {
+                const matchingUpdate = updatedDocs.find(updatedDoc =>
+                    Object.keys(query).every(queryKey => queryKey in doc && doc[queryKey] === query[queryKey])
+                );
+
+                return matchingUpdate ? matchingUpdate.new : doc;
+            }));
+        };
+
+        return updatedDocs;
+    }
+
+    async findAndDelete(key, query) {
+        if (typeof key !== 'string' || key.trim() === '') {
+            throw new TypeError(this.message['errors']['nonEmptyString']);
+        };
+
+        if (typeof query !== 'object' || query === null) {
+            throw new TypeError(this.message['errors']['queryMustObjects']);
+        };
+
+        const data = await this.get(key) || [];
+        if (!Array.isArray(data)) throw new Error(this.message['errors']['dataMustArray']);
+
+        const deletedDocs = data.filter(doc =>
+            Object.keys(query).every(queryKey => queryKey in doc && doc[queryKey] === query[queryKey])
+        );
+
+        const updatedData = data.filter(doc => !deletedDocs.includes(doc));
+
+        this.set(key, updatedData);
+
+        return deletedDocs;
+    }
+
+    async findOneAndUpdate(key, query, update) {
+        if (typeof key !== 'string' || key.trim() === '') {
+            throw new TypeError(this.message['errors']['nonEmptyString']);
+        };
+
+        if (typeof query !== 'object' || query === null) {
+            throw new TypeError(this.message['errors']['queryMustObjects']);
+        };
+
+        if (typeof update !== 'object' || update === null) {
+            throw new TypeError(this.message['errors']['updateMustObjects']);
+        };
+
+        const data = await this.get(key) || [];
+        if (!Array.isArray(data)) throw new Error(this.message['errors']['dataMustArray']);
+
+        let oldDoc = null;
+        let newDoc = null;
+
+        const updatedData = data.map(doc => {
+            const matches = Object.keys(query).every(queryKey => queryKey in doc && doc[queryKey] === query[queryKey]);
+
+            if (matches) {
+                oldDoc = { ...doc };
+                newDoc = { ...doc, ...update };
+
+                return newDoc;
+            };
+
+            return doc;
+        });
+
+        if (oldDoc && newDoc) {
+            this.set(key, updatedData);
+            return { old: oldDoc, new: newDoc };
+        } else {
+            throw new Error(this.message['errors']['noDocMatchedQuery']);
+        };
+    }
+
+    async findOneAndDelete(key, query) {
+        if (typeof key !== 'string' || key.trim() === '') {
+            throw new TypeError(this.message['errors']['nonEmptyString']);
+        };
+
+        if (typeof query !== 'object' || query === null) {
+            throw new TypeError(this.message['errors']['queryMustObjects']);
+        };
+
+        const data = await this.get(key) || [];
+        if (!Array.isArray(data)) throw new Error(this.message['errors']['dataMustArray']);
+
+        let deletedDoc = null;
+
+        const updatedData = data.filter(doc => {
+            const matches = Object.keys(query).every(queryKey => queryKey in doc && doc[queryKey] === query[queryKey]);
+            if (matches) {
+                deletedDoc = { ...doc };
+
+                return false;
+            };
+
+            return true;
+        });
+
+        if (deletedDoc) {
+            this.set(key, updatedData);
+            return deletedDoc;
+        } else {
+            throw new Error(this.message['errors']['noDocMatchedQuery']);
+        };
     }
 }
 

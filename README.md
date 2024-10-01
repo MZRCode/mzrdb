@@ -17,10 +17,12 @@
 </p>
 </div>
 
-## New version 1.4.0!
-- **setAdapter** function fixed!
-- **find** function added!
-- **type** function updated!
+## New version 1.5.0!
+- **findAndUpdate** function added!
+- **findAndDelete** function added!
+- **findOneAndUpdate** function added!
+- **findOneAndDelete** function added!
+- Added language support for bugs in find functions.
 
 ## About
 - **Designed for Beginners:** The mzrdb module simplifies working with databases for new programmers. It provides an intuitive key-value interface, making data storage and retrieval a breeze.
@@ -97,10 +99,16 @@ await db.unpush('key', 'value') // ["mzr"]
 await db.push('key', { mzr: 'value' }) // [ { mzr: "value" }]
 await db.push('key', { mzr2: 'value2' }) // [ { mzr: "value" }, { mzr2: "value2" } ]
 
-await db.find('key', { mzr: 'value' }) // [ { mzr: "value" } ]
-
 await db.delByPriority('key', 1) // [ { mzr2: "value2" } ]
 await db.setByPriority('key', { new2: 'This Edited!' }, 1) // [ { new2: "This Edited!" } ]
+
+await db.find('key', { mzr: 'value' }) // [ { mzr: "value" } ]
+
+await db.findAndUpdate('key', { mzr: 'value' }, { mzr: 'value2' }) // [ { old: { mzr: "value" }, new: { mzr: "value2" } } ]
+await db.findAndDelete('key', { mzr: 'value' }) // [ { mzr: 'value' } ]
+
+await db.findOneAndUpdate('key', { mzr: 'value' }) // { old: { mzr: "value" }, new: { mzr: "value2" } }
+await db.findOneAndDelete('key', { mzr: 'value' }) // { mzr: "value" }
 
 await db.type('key') // string
 await db.has('key') // true
@@ -126,9 +134,9 @@ await db.export('fileName') // true (Highly advanced)
 
 await db.length() // 20 (Character count)
 
-db.ping // { read: '1ms', write: '3ms', average: '2ms' }
+db.ping // { read: "1ms", write: "2ms", average: "1.5ms" }
 db.size // 11 Bytes (Database size)
-db.version // 1.2.0 (Module version)
+db.version // 1.5.0 (Module version)
 ```
 
 ## All Local Adapter Methods
@@ -169,10 +177,16 @@ db.unpush('key', 'value') // ["mzr"]
 db.push('key', { mzr: 'value' }) // [ { mzr: "value" }]
 db.push('key', { mzr2: 'value2' }) // [ { mzr: "value" }, { mzr2: "value2" } ]
 
-db.find('key', { mzr: 'value' }) // [ { mzr: "value" } ]
-
 db.delByPriority('key', 1) // [ { mzr2: "value2" } ]
 db.setByPriority('key', { new2: 'This Edited!' }, 1) // [ { new2: "This Edited!" } ]
+
+db.find('key', { mzr: 'value' }) // [ { mzr: "value" } ]
+
+db.findAndUpdate('key', { mzr: 'value' }, { mzr: 'value2' }) // [ { old: { mzr: "value" }, new: { mzr: "value2" } } ]
+db.findAndDelete('key', { mzr: 'value' }) // [ { mzr: 'value' } ]
+
+db.findOneAndUpdate('key', { mzr: 'value' }) // { old: { mzr: "value" }, new: { mzr: "value2" } }
+db.findOneAndDelete('key', { mzr: 'value' }) // { mzr: "value" }
 
 db.type('key') // string
 db.has('key') // true
@@ -197,7 +211,7 @@ db.length() // 20 (Character count)
 
 db.ping // { read: "1ms", write: "2ms", average: "1.5ms" }
 db.size // 11 Bytes (Database size)
-db.version // 1.2.0 (Module version)
+db.version // 1.5.0 (Module version)
 ```
 
 ## Contact & Support

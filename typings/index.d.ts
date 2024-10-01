@@ -398,9 +398,47 @@ export function length(type?: 'all' | 'char' | 'object'): number;
  * @param {object} query - The query object to filter the documents.
  * @returns {Array<object>} An array of matching documents.
  * @throws {TypeError} Throws an error if the key is not a non-empty string or if the query is not an object.
- * @example db.find('users', { age: 30 });
+ * @example db.find('users', { age: 17 });
 */
 export function find(key: string, query: object): Array<object>;
+
+/**
+ * Finds and updates documents in the database.
+ * @param {string} key - The key to identify the dataset.
+ * @param {object} query - The query to match documents.
+ * @param {object} update - The update to apply to the matched documents.
+ * @returns {Array<{ old: object, new: object }>} An array of objects containing old and new versions of the updated documents.
+ * @example db.findAndUpdate('users', { name: 'Kaan' }, { age: 17 });
+*/
+export function findAndUpdate(key: string, query: object, update: object): Array<{ old: object, new: object }>;
+
+/**
+ * Finds and deletes documents in the database.
+ * @param {string} key - The key to identify the dataset.
+ * @param {object} query - The query to match documents.
+ * @returns {Array<object>} An array of objects representing the deleted documents.
+ * @example db.findAndDelete('users', { name: 'Kaan' });
+*/
+export function findAndDelete(key: string, query: object): Array<object>;
+
+/**
+ * Finds a single document and updates it in the database.
+ * @param {string} key - The key to identify the dataset.
+ * @param {object} query - The query to match a document.
+ * @param {object} update - The update to apply to the matched document.
+ * @returns {{ old: object, new: object }} An object containing the old and new version of the updated document.
+ * @example db.findOneAndUpdate('users', { name: 'Kaan' }, { age: 17 });
+*/
+export function findOneAndUpdate(key: string, query: object, update: object): { old: object, new: object };
+
+/**
+ * Finds a single document and deletes it from the database.
+ * @param {string} key - The key to identify the dataset.
+ * @param {object} query - The query to match a document.
+ * @returns {object} The deleted document.
+ * @example db.findOneAndDelete('users', { name: 'Kaan' });
+*/
+export function findOneAndDelete(key: string, query: object): object;
 
 export { del as delete };
 export { exports as export };

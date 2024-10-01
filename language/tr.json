@@ -4,6 +4,11 @@
         "blankData": "[mzrdb] Ayarlanacak veriyi gir. Sorun mu yaşıyorsun? Discord'uma gel ve istediğin her şeyi sor. https://discord.gg/ktVdQYrtXF",
         "blankNumber": "[mzrdb] Bir sayı gir. Sorun mu yaşıyorsun? Discord'uma gel ve istediğin her şeyi sor. https://discord.gg/ktVdQYrtXF",
         "oldVersion": "[mzrdb] Görüşüne göre mzrdb'nin eski bir sürümünü kullanıyorsun. Modülü güncellemek için 'npm i mzrdb@latest' kodunu kullan. Discorduma katıl: https://discord.gg/ktVdQYrtXF",
-        "blankType": "[mzrdb] String olan bir veri yaz. Sorun mu yaşıyorsun? Discord'uma gel ve istediğin her şeyi sor. https://discord.gg/ktVdQYrtXF"
+        "blankType": "[mzrdb] String olan bir veri yaz. Sorun mu yaşıyorsun? Discord'uma gel ve istediğin her şeyi sor. https://discord.gg/ktVdQYrtXF",
+        "nonEmptyString": "[mzrdb] Key boş olmayan bir string olmalıdır. Sorun mu yaşıyorsun? Discord'uma gel ve istediğin her şeyi sor. https://discord.gg/ktVdQYrtXF",
+        "queryMustObjects": "[mzrdb] Sorgu (query) bir object olmalıdır. Sorun mu yaşıyorsun? Discord'uma gel ve istediğin her şeyi sor. https://discord.gg/ktVdQYrtXF",
+        "updateMustObjects": "[mzrdb] Güncelleme bir object olmalıdır. Sorun mu yaşıyorsun? Discord'uma gel ve istediğin her şeyi sor. https://discord.gg/ktVdQYrtXF",
+        "dataMustArray": "[mzrdb] Veri bir array olmalıdır. Sorun mu yaşıyorsun? Discord'uma gel ve istediğin her şeyi sor. https://discord.gg/ktVdQYrtXF",
+        "noDocMatchedQuery": "[mzrdb] Sorguyla (Query ile) eşleşen belge yok. Sorun mu yaşıyorsun? Discord'uma gel ve istediğin her şeyi sor. https://discord.gg/ktVdQYrtXF"
     }
 }
