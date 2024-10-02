@@ -440,5 +440,17 @@ export function findOneAndUpdate(key: string, query: object, update: object): { 
 */
 export function findOneAndDelete(key: string, query: object): object;
 
+/**
+ * Finds the first document that matches the query from the specified key.
+ * @param {string} key - The key for the collection.
+ * @param {Object} query - The query object to match documents.
+ * @returns {Object | null} The first document that matches the query, or null if no document matches.
+ * @throws {TypeError} If the key is not a non-empty string or if the query is not an object.
+ * @throws {Error} If the data retrieved from the key is not an array.
+ * @example db.findOne('users', { name: 'Kaan' });
+*/
+export function findOne(key: string, query: Record<string, any>): Record<string, any> | null;
+
+
 export { del as delete };
 export { exports as export };

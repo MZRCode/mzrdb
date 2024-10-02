@@ -563,6 +563,21 @@ class YamlDB {
       throw new Error(this.message['errors']['noDocMatchedQuery']);
     };
   }
+
+  findOne(key, query) {
+    if (typeof key !== 'string' || key.trim() === '') {
+      throw new TypeError(this.message['errors']['nonEmptyString']);
+    };
+
+    if (typeof query !== 'object' || query === null) {
+      throw new TypeError(this.message['errors']['queryMustObjects']);
+    };
+
+    const data = this.get(key) || [];
+    if (!Array.isArray(data)) throw new Error(this.message['errors']['dataMustArray']);
+
+    return data.find(doc => Object.keys(query).every(queryKey => queryKey in doc && doc[queryKey] === query[queryKey])) || null;
+  }
 }
 
 module.exports = YamlDB;

@@ -17,12 +17,8 @@
 </p>
 </div>
 
-## New version 1.5.0!
-- **findAndUpdate** function added!
-- **findAndDelete** function added!
-- **findOneAndUpdate** function added!
-- **findOneAndDelete** function added!
-- Added language support for bugs in find functions.
+## New version 1.6.0!
+- **findOne** function added!
 
 ## About
 - **Designed for Beginners:** The mzrdb module simplifies working with databases for new programmers. It provides an intuitive key-value interface, making data storage and retrieval a breeze.
@@ -103,9 +99,10 @@ await db.delByPriority('key', 1) // [ { mzr2: "value2" } ]
 await db.setByPriority('key', { new2: 'This Edited!' }, 1) // [ { new2: "This Edited!" } ]
 
 await db.find('key', { mzr: 'value' }) // [ { mzr: "value" } ]
+await db.findOne('key', { mzr: 'value' }) // { mzr: "value" }
 
 await db.findAndUpdate('key', { mzr: 'value' }, { mzr: 'value2' }) // [ { old: { mzr: "value" }, new: { mzr: "value2" } } ]
-await db.findAndDelete('key', { mzr: 'value' }) // [ { mzr: 'value' } ]
+await db.findAndDelete('key', { mzr: 'value' }) // [ { mzr: "value" } ]
 
 await db.findOneAndUpdate('key', { mzr: 'value' }) // { old: { mzr: "value" }, new: { mzr: "value2" } }
 await db.findOneAndDelete('key', { mzr: 'value' }) // { mzr: "value" }
@@ -136,7 +133,7 @@ await db.length() // 20 (Character count)
 
 db.ping // { read: "1ms", write: "2ms", average: "1.5ms" }
 db.size // 11 Bytes (Database size)
-db.version // 1.5.0 (Module version)
+db.version // 1.6.0 (Module version)
 ```
 
 ## All Local Adapter Methods
@@ -181,9 +178,10 @@ db.delByPriority('key', 1) // [ { mzr2: "value2" } ]
 db.setByPriority('key', { new2: 'This Edited!' }, 1) // [ { new2: "This Edited!" } ]
 
 db.find('key', { mzr: 'value' }) // [ { mzr: "value" } ]
+db.findOne('key', { mzr: 'value' }) // { mzr: "value" }
 
 db.findAndUpdate('key', { mzr: 'value' }, { mzr: 'value2' }) // [ { old: { mzr: "value" }, new: { mzr: "value2" } } ]
-db.findAndDelete('key', { mzr: 'value' }) // [ { mzr: 'value' } ]
+db.findAndDelete('key', { mzr: 'value' }) // [ { mzr: "value" } ]
 
 db.findOneAndUpdate('key', { mzr: 'value' }) // { old: { mzr: "value" }, new: { mzr: "value2" } }
 db.findOneAndDelete('key', { mzr: 'value' }) // { mzr: "value" }
@@ -211,7 +209,7 @@ db.length() // 20 (Character count)
 
 db.ping // { read: "1ms", write: "2ms", average: "1.5ms" }
 db.size // 11 Bytes (Database size)
-db.version // 1.5.0 (Module version)
+db.version // 1.6.0 (Module version)
 ```
 
 ## Contact & Support

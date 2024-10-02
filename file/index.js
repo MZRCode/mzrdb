@@ -473,5 +473,11 @@ module.exports = {
     this.setOptions();
 
     return this.adapter.findOneAndDelete(key, query);
-  }
+  },
+
+  findOne(key, query) {
+    this.setOptions();
+
+    return this.adapter.findOne(key, query);
+  },
 }
