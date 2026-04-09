@@ -2,8 +2,7 @@
     "compilerOptions": {
         "outDir": "./file/*",
         "module": "commonjs",
-        "target": "es5",
-        "moduleResolution": "node",
+        "target": "es2016",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "noUnusedLocals": true,
@@ -11,7 +10,11 @@
         "declaration": false,
         "pretty": true,
         "strictNullChecks": true,
-        "lib": [ "es2016","dom","scripthost" ]
+        "lib": [
+            "es2016",
+            "dom",
+            "scripthost"
+        ]
     },
     "include": [
         "./typings/*"

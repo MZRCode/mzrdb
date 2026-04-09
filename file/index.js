@@ -2,7 +2,7 @@ const langs = ['tr', 'en'];
 
 module.exports = {
   setOptions() {
-    var adapter = this.adapter || require('../adapters/jsondb');
+    var adapter = this.adapterClass || (typeof this.adapter === 'function' ? this.adapter : this.adapter?.constructor) || require('../adapters/jsondb');
     var adapterName = this.adapterName || 'json';
 
     if (this.mongoOptions?.schema) this.isMongoSpecialSchema = true;
@@ -26,7 +26,8 @@ module.exports = {
 
     this.options.mongoOptions.seperator = this.options.seperator;
 
-    this.adapter = adapter.set ? adapter : (this.mongo ? new adapter(this.options.mongoOptions) : new adapter(this.options));
+    this.adapterClass = adapter;
+    this.adapter = this.mongo ? new adapter(this.options.mongoOptions) : new adapter(this.options);
     this.adapterName = adapterName ? adapterName : 'json';
 
     if (this.checkUpdates) {
@@ -74,12 +75,13 @@ module.exports = {
   setAdapter(adapter, options = { seperator: this.options?.seperator ?? '.' }) {
     if (adapter.length < 1) throw new TypeError(this.message['errors']['blankName']);
 
-    const adapters = ['mongodb', 'jsondb', 'bsondb', 'yamldb'];
-    if (!adapters.includes(adapter)) throw new TypeError('Please write down one of the adapters we support. (jsondb / mongodb / bsondb / yamldb)');
+    const adapters = ['mongodb', 'jsondb', 'bsondb', 'yamldb', 'multifile-jsondb'];
+    if (!adapters.includes(adapter)) throw new TypeError('Please write down one of the adapters we support. (jsondb / mongodb / bsondb / yamldb / multifile-jsondb)');
 
     if (adapter !== 'mongodb') {
       var adapterRequire = require('../adapters/' + adapter) || require('../adapters/jsondb');
 
+      this.adapterClass = adapterRequire;
       this.adapter = adapterRequire;
       this.mongo = false;
 
@@ -97,6 +99,7 @@ module.exports = {
       this.adapterName = adapter.slice(0, -2);
       var adapter = require('../adapters/mongodb/index');
 
+      this.adapterClass = adapter;
       this.adapter = adapter;
       this.mongo = true;
       this.mongoOptions = options;
@@ -402,6 +405,7 @@ module.exports = {
   deleteMongo() {
     var adapter = require('../adapters/jsondb');
 
+    this.adapterClass = adapter;
     this.adapter = adapter;
     this.mongo = false;
     this.setOptions();
@@ -479,5 +483,30 @@ module.exports = {
     this.setOptions();
 
     return this.adapter.findOne(key, query);
+  },
+
+  /**
+   * Get a list of all tables in the database.
+   * Only available with the multifile-jsondb adapter.
+   * @returns {string[]} Array of table names
+   */
+  tables() {
+    this.setOptions();
+
+    if (this.adapter.tables) return this.adapter.tables();
+    throw new Error('tables() is only available with multifile-jsondb adapter');
+  },
+
+  /**
+   * Migrate from single-file mzrdb.json to multi-file format.
+   * Only available with the multifile-jsondb adapter.
+   * @param {string} sourcePath - Optional path to source JSON file
+   * @returns {true} Always returns true on success
+   */
+  migrate(sourcePath) {
+    this.setOptions();
+
+    if (this.adapter.migrate) return this.adapter.migrate(sourcePath);
+    throw new Error('migrate() is only available with multifile-jsondb adapter');
   },
 }

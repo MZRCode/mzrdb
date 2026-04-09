@@ -196,13 +196,17 @@ db.delete('key') // true
 db.deleteAll() // true (Cleans database)
 db.clear() // true (Cleans database)
 
-db.backup('fileName') // true (Backups database)
+db.backup('fileName') // true (Backups database. multifile-jsondb creates a folder)
 db.loadBackup('./mzrdb-backup') // true
 db.destroy() // true (Deletes database file)
 
 db.startsWith('ke') // [ { key: "key", data: "value" } ]
 db.includes('e') // [ { key: "key", data: "value" } ]
 db.endsWith('ey') // [ { key: "key", data: "value" } ]
+
+db.tables() // ['mzrdb', 'users', 'orders'] (Only for multifile-jsondb)
+db.migrate() // true (Migrates ./mzrdb/mzrdb.json into multifile tables)
+db.migrate('./old-db/mzrdb.json') // true (Migrates a specific single jsondb file)
 
 db.length('object') // 1 
 db.length() // 20 (Character count)
@@ -211,6 +215,43 @@ db.ping // { read: "1ms", write: "2ms", average: "1.5ms" }
 db.size // 11 Bytes (Database size)
 db.version // 1.6.0 (Module version)
 ```
+
+## MultiFile Notes
+```js
+const db = require('mzrdb')
+
+db.setFolder('mzrdb')
+db.setFile('mzrdb')
+db.setReadable(true)
+db.setAdapter('multifile-jsondb')
+
+db.tables() // Lists json table files in the folder
+
+// Migrates classic single-file jsondb data into multifile format.
+// Top-level object keys become table files.
+db.migrate() // Reads ./mzrdb/mzrdb.json by default
+db.migrate('./old-db/mzrdb.json') // Reads a specific source file
+```
+
+Example migration:
+```json
+{
+  "users": {
+    "123": {
+      "name": "Kaan"
+    }
+  },
+  "config": {
+    "theme": "dark"
+  },
+  "simpleKey": "value"
+}
+```
+
+Becomes:
+- `users.json` -> `{ "123": { "name": "Kaan" } }`
+- `config.json` -> `{ "theme": "dark" }`
+- `mzrdb.json` -> `{ "simpleKey": "value" }`
 
 ## Contact & Support
 [![Discord Server](https://api.weblutions.com/discord/invite/ktVdQYrtXF)](https://discord.gg/ktVdQYrtXF)
