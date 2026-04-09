@@ -58,7 +58,7 @@ export function setCheckUpdates(checkUpdates: boolean): boolean;
  * @example db.setAdapter('jsondb');
  * @supportedAdapters **jsondb**, **bsondb**, **yamldb**, **mongodb**
 */
-export function setAdapter(adapter: 'jsondb' | 'mongodb' | 'bsondb' | 'yamldb', options?: MongoOptions): true;
+export function setAdapter(adapter: 'jsondb' | 'mongodb' | 'bsondb' | 'yamldb' | 'multifile-jsondb', options?: MongoOptions): true;
 
 /**
  * Sets the folder name for the database.
@@ -266,10 +266,10 @@ export function clear(): true;
 
 /**
  * Creates a backup of the database.
- * @param {string} fileName - The name of the backup file.
+ * @param {string} fileName - The backup name. In multifile-jsondb this creates a folder with table json files.
  * @returns {true} Always returns true.
  * @example db.backup('mzrdb-backup');
- * @supportedAdapters **jsondb**, **bsondb**, **yamldb**, **mongodb**
+ * @supportedAdapters **jsondb**, **bsondb**, **yamldb**, **mongodb**, **multifile-jsondb**
 */
 export function backup(fileName: string): true;
 
@@ -319,11 +319,11 @@ export function endsWith(key: string): string[];
 export function destroy(): true;
 
 /**
- * Loads data from a backup file into the database.
- * @param {string} filePath - The path to the backup file.
+ * Loads data from a backup file or backup folder into the database.
+ * @param {string} filePath - The path to the backup file or folder.
  * @returns {true} Always returns true.
  * @example db.loadBackup('./mzrdb-backup');
- * @supportedAdapters **jsondb**, **bsondb**, **yamldb**, ~~mongodb~~
+ * @supportedAdapters **jsondb**, **bsondb**, **yamldb**, ~~mongodb~~, **multifile-jsondb**
 */
 export function loadBackup(filePath: string): true;
 
@@ -454,3 +454,23 @@ export function findOne(key: string, query: Record<string, any>): Record<string,
 
 export { del as delete };
 export { exports as export };
+
+/**
+ * Returns a list of all table names in the database.
+ * Only available with the multifile-jsondb adapter.
+ * @returns {string[]} Array of table names
+ * @example db.tables();
+ * @supportedAdapters ~~jsondb~~, ~~bsondb~~, ~~yamldb~~, ~~mongodb~~, **multifile-jsondb**
+ */
+export function tables(): string[];
+
+/**
+ * Migrates data from a single mzrdb.json file to multi-file format.
+ * Only available with the multifile-jsondb adapter.
+ * @param {string} [sourcePath] Optional path to source JSON file
+ * @returns {true} Always returns true on success
+ * @example db.migrate();
+ * @example db.migrate('./oldDatabase/mzrdb.json');
+ * @supportedAdapters ~~jsondb~~, ~~bsondb~~, ~~yamldb~~, ~~mongodb~~, **multifile-jsondb**
+ */
+export function migrate(sourcePath?: string): true;
