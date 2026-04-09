@@ -6,7 +6,7 @@
     "url": "https://github.com/mzrcode/mzrdb/issues"
   },
   "deprecated": false,
-  "description": "User-friendly database module supporting JSON, MongoDB, YAML, and BSON formats for seamless data management.",
+  "description": "User-friendly database module supporting JSON, multifile JSON, MongoDB, YAML, and BSON formats for seamless data management.",
   "homepage": "https://github.com/mzrcode/mzrdb#readme",
   "keywords": [
     "db",
@@ -27,7 +27,10 @@
     "mongo",
     "mongodb",
     "mongoose",
-    "mongoose database"
+    "mongoose database",
+    "multifile database",
+    "multifile jsondb",
+    "mutlifile json database"
   ],
   "license": "MIT",
   "main": "./file/index.js",
@@ -37,5 +40,5 @@
     "type": "git",
     "url": "git+https://github.com/mzrcode/mzrdb.git"
   },
-  "version": "1.6.0"
+  "version": "1.7.0"
 }
