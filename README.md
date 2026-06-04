@@ -17,7 +17,7 @@
 </p>
 </div>
 
-## New version 1.7.1!
+## New version 1.7.2!
 - **multifile-jsondb** was introduced in v1.7 as a new adapter that stores top-level objects in separate JSON table files.
 - It is useful when you want to split a large single JSON database into smaller table files like `afk.json`, `users.json`, or `config.json`.
 - It now supports `tables()` and `migrate()`.
