@@ -164,6 +164,13 @@ class MultiFileJsonDB {
     get(key) {
         if (!key) throw new TypeError(this.message['errors']['blankName']);
 
+        const hasSeparator = key.includes(this.seperator);
+        if (!hasSeparator) {
+            const tableFilePath = functions.getTableFilePath(this.dbFolder, key);
+
+            if (fs.existsSync(tableFilePath)) return this.getTableData(key);
+        };
+
         const tableName = this.getTableName(key);
         const tableKey = this.getTableKey(key);
         const tableData = this.getTableData(tableName);
