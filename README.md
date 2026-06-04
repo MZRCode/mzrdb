@@ -17,8 +17,13 @@
 </p>
 </div>
 
-## New version 1.6.0!
-- **findOne** function added!
+## New version 1.7.1!
+- **multifile-jsondb** was introduced in v1.7 as a new adapter that stores top-level objects in separate JSON table files.
+- It is useful when you want to split a large single JSON database into smaller table files like `afk.json`, `users.json`, or `config.json`.
+- It now supports `tables()` and `migrate()`.
+- Backups for **multifile-jsondb** now use folder-based output and can be restored from a folder.
+- Readable writes are respected during migration, backup, and table file creation.
+- Typings and documentation for **multifile-jsondb** were updated.
 
 ## About
 - **Designed for Beginners:** The mzrdb module simplifies working with databases for new programmers. It provides an intuitive key-value interface, making data storage and retrieval a breeze.
@@ -41,6 +46,21 @@
 - Open-source and actively maintained
 - Extensive documentation and tutorials
 - Reliable and robust solutio
+
+## Moving Data From jsondb to multifile-jsondb
+If you used `jsondb` before, you do not need to change any code to move to `multifile-jsondb`; just switch the adapter and run `migrate()`.
+
+```js
+const db = require('mzrdb');
+
+db.setAdapter('multifile-jsondb');
+
+// Migrates ./mzrdb/mzrdb.json into separate table files.
+db.migrate();
+
+// Or migrate a specific old jsondb file.
+// db.migrate('./old-db/mzrdb.json');
+```
 
 ## Moving Data From Quick.DB to mzrdb (Local Database)
 ```js
