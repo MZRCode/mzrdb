@@ -50,6 +50,8 @@
 ## Moving Data From jsondb to multifile-jsondb
 If you used `jsondb` before, you do not need to change any code to move to `multifile-jsondb`; just switch the adapter and run `migrate()`.
 
+If your table names contain non-Latin characters, mzrdb converts them to ASCII file names during migration and prints the old/new names in the console.
+
 ```js
 const db = require('mzrdb');
 

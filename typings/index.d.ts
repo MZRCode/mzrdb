@@ -467,6 +467,7 @@ export function tables(): string[];
 /**
  * Migrates data from a single mzrdb.json file to multi-file format.
  * Only available with the multifile-jsondb adapter.
+ * Non-Latin characters in table names are normalized to ASCII file names and the renamed tables are logged.
  * @param {string} [sourcePath] Optional path to source JSON file
  * @returns {true} Always returns true on success
  * @example db.migrate();

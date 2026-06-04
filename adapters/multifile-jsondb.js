@@ -62,9 +62,11 @@ class MultiFileJsonDB {
     }
 
     loadTable(tableName) {
-        if (this.tableCache.has(tableName) && this.tableCache.get(tableName).loaded) return this.tableCache.get(tableName).data;
+        const cacheTableName = functions.normalizeTableName(tableName);
 
-        const filePath = functions.getTableFilePath(this.dbFolder, tableName);
+        if (this.tableCache.has(cacheTableName) && this.tableCache.get(cacheTableName).loaded) return this.tableCache.get(cacheTableName).data;
+
+        const filePath = functions.ensureNormalizedTableFilePath(this.dbFolder, cacheTableName);
         let data = {};
 
         if (fs.existsSync(filePath)) {
@@ -77,7 +79,7 @@ class MultiFileJsonDB {
             }
         }
 
-        this.tableCache.set(tableName, { data, dirty: false, loaded: true });
+        this.tableCache.set(cacheTableName, { data, dirty: false, loaded: true });
         return data;
     }
 
@@ -86,30 +88,34 @@ class MultiFileJsonDB {
     }
 
     markDirty(tableName) {
-        if (!this.tableCache.has(tableName)) return;
+        const cacheTableName = functions.normalizeTableName(tableName);
 
-        const cache = this.tableCache.get(tableName);
+        if (!this.tableCache.has(cacheTableName)) return;
+
+        const cache = this.tableCache.get(cacheTableName);
         cache.dirty = true;
 
-        if (this.writeQueue.has(tableName)) clearTimeout(this.writeQueue.get(tableName));
+        if (this.writeQueue.has(cacheTableName)) clearTimeout(this.writeQueue.get(cacheTableName));
 
         const timeoutId = setTimeout(() => {
-            this.flushTable(tableName);
+            this.flushTable(cacheTableName);
         }, this.writeDelay);
 
-        this.writeQueue.set(tableName, timeoutId);
+        this.writeQueue.set(cacheTableName, timeoutId);
     }
 
     flushTable(tableName) {
-        if (!this.tableCache.has(tableName)) return;
+        const cacheTableName = functions.normalizeTableName(tableName);
 
-        const cache = this.tableCache.get(tableName);
+        if (!this.tableCache.has(cacheTableName)) return;
+
+        const cache = this.tableCache.get(cacheTableName);
         if (!cache.dirty) return;
 
-        if (this.writeQueue.has(tableName)) {
-            clearTimeout(this.writeQueue.get(tableName));
+        if (this.writeQueue.has(cacheTableName)) {
+            clearTimeout(this.writeQueue.get(cacheTableName));
 
-            this.writeQueue.delete(tableName);
+            this.writeQueue.delete(cacheTableName);
         };
 
         let dataToWrite = cache.data;
@@ -117,7 +123,7 @@ class MultiFileJsonDB {
 
         functions.atomicWrite(
             this.dbFolder,
-            tableName,
+            cacheTableName,
             dataToWrite,
             this.readable
         );
@@ -136,13 +142,15 @@ class MultiFileJsonDB {
     }
 
     syncFlush(tableName) {
-        if (this.writeQueue.has(tableName)) {
-            clearTimeout(this.writeQueue.get(tableName));
+        const cacheTableName = functions.normalizeTableName(tableName);
 
-            this.writeQueue.delete(tableName);
+        if (this.writeQueue.has(cacheTableName)) {
+            clearTimeout(this.writeQueue.get(cacheTableName));
+
+            this.writeQueue.delete(cacheTableName);
         };
 
-        this.flushTable(tableName);
+        this.flushTable(cacheTableName);
     }
 
     set(key, data) {
@@ -166,7 +174,7 @@ class MultiFileJsonDB {
 
         const hasSeparator = key.includes(this.seperator);
         if (!hasSeparator) {
-            const tableFilePath = functions.getTableFilePath(this.dbFolder, key);
+            const tableFilePath = functions.ensureNormalizedTableFilePath(this.dbFolder, key);
 
             if (fs.existsSync(tableFilePath)) return this.getTableData(key);
         };
@@ -376,8 +384,10 @@ class MultiFileJsonDB {
         const tableFiles = functions.listTableFiles(this.dbFolder);
 
         for (const tableName of tableFiles) {
-            this.tableCache.set(tableName, { data: {}, dirty: true, loaded: true });
-            this.syncFlush(tableName);
+            const cacheTableName = functions.normalizeTableName(tableName);
+
+            this.tableCache.set(cacheTableName, { data: {}, dirty: true, loaded: true });
+            this.syncFlush(cacheTableName);
         }
 
         return true;
@@ -424,9 +434,10 @@ class MultiFileJsonDB {
             for (const tableName of tableNames) {
                 const backupTablePath = functions.getTableFilePath(filePath, tableName);
                 const tableData = JSON.parse(fs.readFileSync(backupTablePath, 'utf8'));
+                const normalizedTableName = functions.normalizeTableName(tableName);
 
-                this.tableCache.set(tableName, { data: tableData, dirty: false, loaded: true });
-                functions.atomicWrite(this.dbFolder, tableName, tableData, this.readable);
+                this.tableCache.set(normalizedTableName, { data: tableData, dirty: false, loaded: true });
+                functions.atomicWrite(this.dbFolder, normalizedTableName, tableData, this.readable);
             }
 
             return true;
@@ -546,6 +557,7 @@ class MultiFileJsonDB {
         const oldData = JSON.parse(fs.readFileSync(sourceFile, 'utf8'));
         let migratedCount = 0;
         let migratedTables = 0;
+        const renamedTables = [];
 
         this.destroy();
         functions.ensureFolder(this.dbFolder);
@@ -561,9 +573,11 @@ class MultiFileJsonDB {
 
             if (this.isPlainObject(value) && key !== this.defaultTable) {
                 const tableData = this.noBlankData ? functions.removeEmptyData({ ...value }) : value;
+                const normalizedTableName = functions.normalizeTableName(key);
+                if (normalizedTableName !== key) renamedTables.push(`${key} -> ${normalizedTableName}`);
 
-                this.tableCache.set(key, { data: tableData, dirty: false, loaded: true });
-                functions.atomicWrite(this.dbFolder, key, tableData, this.readable);
+                this.tableCache.set(normalizedTableName, { data: tableData, dirty: false, loaded: true });
+                functions.atomicWrite(this.dbFolder, normalizedTableName, tableData, this.readable);
 
                 migratedCount++;
                 migratedTables++;
@@ -581,6 +595,7 @@ class MultiFileJsonDB {
 
         console.log(`[MZRDB Migration] Migrated ${migratedCount} keys from ${sourceFile}`);
         if (migratedTables > 0) console.log(`[MZRDB Migration] Split ${migratedTables} top-level objects into table files`);
+        if (renamedTables.length > 0) console.log(`[MZRDB Migration] Renamed tables: ${renamedTables.join(', ')}`);
 
         console.log(`[MZRDB Migration] Original file backed up to ${backupPath}`);
         console.log(`[MZRDB Migration] Created tables: ${this.tables().join(', ')}`);
